@@ -1,14 +1,13 @@
 import express from "express";
-// import {getUsers, setUser, getUserById, updateUserById, deleteUserById, auth} from "../controllers/userController.js";
+import {getIngredientes, setIngrediente, getIngredienteById, updateIngredienteById, getIngredientesByTipo} from "../controllers/ingredienteController.js";
 
 const router = express.Router();
 
 //Definimos las rutas
-// router.get("/", getUsers);
-// router.get("/:id", getUserById);
-// router.post("/auth", auth);
-// router.post("/", setUser);
-// router.put("/:id", updateUserById);
-// router.delete("/:id", deleteUserById);
+router.get("/", getIngredientes);
+router.get("/:id", getIngredienteById);
+router.post("/", setIngrediente);
+router.put("/:id", updateIngredienteById);
+router.get("/tipo/:tipo", getIngredientesByTipo);
 
 export default router;

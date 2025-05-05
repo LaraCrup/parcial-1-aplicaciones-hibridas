@@ -1,16 +1,16 @@
 import express from "express";
-// import {getUsers, setUser, getUserById, updateUserById, deleteUserById, auth} from "../controllers/userController.js";
+import {getPlatos, setPlato, getPlatoByNombre, deletePlatoById, updatePlatoById, getPlatosByTipo, getPlatosByDificultad} from "../controllers/platoController.js";
 
 const router = express.Router();
 
 //Definimos las rutas
-// router.get("/", getUsers);
-// router.get("/:id", getUserById);
-// router.post("/auth", auth);
-// router.post("/", setUser);
-// router.put("/:id", updateUserById);
-// router.delete("/:id", deleteUserById);
-
+router.get("/", getPlatos);
+router.post("/", setPlato);
+router.delete("/:id", deletePlatoById);
+router.put("/:id", updatePlatoById);
+router.get("/:nombre", getPlatoByNombre);
+router.get("/tipo/:tipo", getPlatosByTipo);
+router.get("/dificultad/:dificultad", getPlatosByDificultad);
 
 
 export default router;
