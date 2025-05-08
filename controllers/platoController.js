@@ -84,6 +84,13 @@ const validarTiposDatos = (datos) => {
     return { esValido: true };
 };
 
+const validarTiempoMaximo = (tiempo) => {
+    if (!Number.isInteger(parseInt(tiempo)) || parseInt(tiempo) <= 0) {
+        return { esValido: false, mensaje: "El tiempo máximo debe ser un número entero positivo" };
+    }
+    return { esValido: true };
+};
+
 const getPlatos = async (req, res) => {
     try {
         const platos = await Plato.find();
@@ -241,4 +248,23 @@ const getPlatosByDificultad = async (req, res) => {
     }
 }
 
-export {getPlatos, setPlato, getPlatoByNombre, deletePlatoById, updatePlatoById, getPlatosByTipo, getPlatosByDificultad};
+const getPlatosByTiempoCoccion = async (req, res) => {
+    try {
+        const tiempoMax = req.params.tiempo;
+        const validacionTiempo = validarTiempoMaximo(tiempoMax);
+        if (!validacionTiempo.esValido) {
+            return res.status(400).json({ msg: validacionTiempo.mensaje });
+        }
+
+        const platos = await Plato.find({ tiempoCoccion: { $lte: parseInt(tiempoMax) } });
+        if (platos.length === 0) {
+            return res.status(404).json({ msg: "No hay platos con tiempo de cocción menor al especificado", data: [] });
+        }
+        res.status(200).json({ msg: "OK", data: platos });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error del servidor", error });
+    }
+}
+
+export {getPlatos, setPlato, getPlatoByNombre, deletePlatoById, updatePlatoById, getPlatosByTipo, getPlatosByDificultad, getPlatosByTiempoCoccion};
