@@ -208,11 +208,13 @@ const updatePlatoById = async (req, res) => {
 const getPlatoByNombre = async (req, res) => {
     try {
         const nombre = req.params.nombre;
-        const plato = await Plato.findOne({ nombre: nombre });
-        if (!plato) {
+        const platos = await Plato.find({ 
+            nombre: { $regex: nombre, $options: 'i' } 
+        });
+        if (platos.length === 0) {
             return res.status(404).json({ msg: "Plato no encontrado", data: [] });
         } else {
-            res.status(200).json({ msg: "OK", data: plato });
+            res.status(200).json({ msg: "OK", data: platos });
         }
     } catch (error) {
         console.error(error);
