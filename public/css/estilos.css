@@ -70,6 +70,8 @@ h2 {
 
 .containerRutas {
     display: none;
+    max-width: 1440px;
+    margin: 0 auto;
 }
 
 .containerEndpoints {
