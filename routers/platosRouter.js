@@ -3,7 +3,6 @@ import {getPlatos, setPlato, getPlatoByNombre, deletePlatoById, updatePlatoById,
 
 const router = express.Router();
 
-//Definimos las rutas
 router.get("/", getPlatos);
 router.post("/", setPlato);
 router.delete("/:id", deletePlatoById);

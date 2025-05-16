@@ -3,7 +3,6 @@ import {getIngredientes, setIngrediente, getIngredienteById, updateIngredienteBy
 
 const router = express.Router();
 
-//Definimos las rutas
 router.get("/", getIngredientes);
 router.get("/:id", getIngredienteById);
 router.post("/", setIngrediente);

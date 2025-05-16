@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 const secret_key = process.env.SECRET_KEY;
 
-// Funciones de validación
 const validarCamposRequeridos = (datos) => {
     const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad } = datos;
     if (!nombre || !descripcion || !region || !tipo || !ingredientes || !tiempoCoccion || !dificultad) {

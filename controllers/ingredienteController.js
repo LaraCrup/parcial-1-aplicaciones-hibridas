@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();
 const secret_key = process.env.SECRET_KEY;
 
-// Funciones de validación
 const validarCamposRequeridos = (datos) => {
     const { nombre, descripcion, tipo } = datos;
     if (!nombre || !descripcion || !tipo) {
@@ -104,13 +103,11 @@ const setIngrediente = async (req, res) => {
 
 const getIngredienteById = async (req, res) => {
     try {
-        // Validar formato del ID
         const validacionId = validarId(req.params.id);
         if (!validacionId.esValido) {
             return res.status(400).json({ msg: validacionId.mensaje });
         }
 
-        // Buscar ingrediente en la base de datos
         const ingrediente = await Ingrediente.findById(req.params.id);
         if (!ingrediente) {
             return res.status(404).json({ msg: "Ingrediente no encontrado en la base de datos", data: [] });
@@ -140,7 +137,6 @@ const updateIngredienteById = async (req, res) => {
             return res.status(400).json({ msg: validacionCampos.mensaje });
         }
 
-        // Si se proporciona tipo, validarlo
         if (req.body.tipo) {
             const validacionTipo = validarTipoIngrediente(req.body.tipo);
             if (!validacionTipo.esValido) {
