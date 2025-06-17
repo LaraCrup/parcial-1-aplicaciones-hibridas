@@ -5,8 +5,8 @@ dotenv.config();
 const secret_key = process.env.SECRET_KEY;
 
 const validarCamposRequeridos = (datos) => {
-    const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad } = datos;
-    if (!nombre || !descripcion || !region || !tipo || !ingredientes || !tiempoCoccion || !dificultad) {
+    const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad, imagen } = datos;
+    if (!nombre || !descripcion || !region || !tipo || !ingredientes || !tiempoCoccion || !dificultad || !imagen) {
         return { esValido: false, mensaje: "Todos los campos son requeridos" };
     }
     if (!Array.isArray(ingredientes) || ingredientes.length === 0) {
@@ -46,7 +46,7 @@ const validarId = (id) => {
 };
 
 const validarTiposDatos = (datos) => {
-    const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad } = datos;
+    const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad, imagen } = datos;
     
     if (nombre && typeof nombre !== 'string') {
         return { esValido: false, mensaje: "El nombre debe ser una cadena de texto" };
@@ -78,6 +78,10 @@ const validarTiposDatos = (datos) => {
     
     if (dificultad && typeof dificultad !== 'string') {
         return { esValido: false, mensaje: "La dificultad debe ser una cadena de texto" };
+    }
+    
+    if (imagen && typeof imagen !== 'string') {
+        return { esValido: false, mensaje: "La imagen debe ser una URL en formato texto" };
     }
     
     return { esValido: true };
@@ -127,12 +131,12 @@ const setPlato = async (req, res) => {
             return res.status(400).json({ msg: validacionTiempo.mensaje });
         }
 
-        const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad } = req.body;
+        const { nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad, imagen } = req.body;
         const plato = await Plato.findOne({ nombre: nombre });
         if (plato) {
             return res.status(404).json({ msg: "El plato ya existe" });
         }
-        const platoNuevo = new Plato({ nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad });
+        const platoNuevo = new Plato({ nombre, descripcion, region, tipo, ingredientes, tiempoCoccion, dificultad, imagen });
         platoNuevo.save();
         const id = platoNuevo._id;
         res.status(202).json({ msg: "Plato guardado", id });
@@ -141,6 +145,25 @@ const setPlato = async (req, res) => {
         res.status(500).json({ msg: "Error del servidor. No se pudo guardar el plato", error });
     }
 }
+
+const getPlatoById = async (req, res) => {
+    try {
+        const validacionId = validarId(req.params.id);
+        if (!validacionId.esValido) {
+            return res.status(400).json({ msg: validacionId.mensaje });
+        }
+
+        const plato = await Plato.findById(req.params.id);
+        if (!plato) {
+            return res.status(404).json({ msg: "Plato no encontrado en la base de datos", data: null });
+        }
+
+        res.status(200).json({ msg: "OK", data: plato });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error del servidor", error });
+    }
+} 
 
 const deletePlatoById = async (req, res) => {
     try {
@@ -268,4 +291,4 @@ const getPlatosByTiempoCoccion = async (req, res) => {
     }
 }
 
-export {getPlatos, setPlato, getPlatoByNombre, deletePlatoById, updatePlatoById, getPlatosByTipo, getPlatosByDificultad, getPlatosByTiempoCoccion};
+export {getPlatos, setPlato, getPlatoById, getPlatoByNombre, deletePlatoById, updatePlatoById, getPlatosByTipo, getPlatosByDificultad, getPlatosByTiempoCoccion};

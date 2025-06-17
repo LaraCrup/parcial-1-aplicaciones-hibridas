@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import routerAPI from './routers/index.js';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 dotenv.config()
 const port = process.env.PORT;
@@ -15,6 +16,7 @@ db.on('error', (error) => console.error(error, 'Error de conexión'));
 db.once('open', () => console.info('Conectado a la base de datos'));
 
 app.use(express.json());
+app.use(cors());
 
 app.use(express.static('public'));
 

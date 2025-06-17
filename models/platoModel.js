@@ -45,6 +45,10 @@ const platoSchema = new Schema({
             message: '{VALUE} no es una dificultad válida'
         },
         required: [true, 'La dificultad es requerida']
+    },
+    imagen: {
+        type: String,
+        required: [true, 'La URL de la imagen es requerida']
     }
 });
 
