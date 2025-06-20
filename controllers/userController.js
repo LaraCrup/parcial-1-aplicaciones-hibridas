@@ -1,6 +1,7 @@
 import  User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 
 dotenv.config();
 const secret_key = process.env.SECRET_KEY;
@@ -42,9 +43,9 @@ const setUser = async (req, res) => {
             return res.status(409).json({ msg: "El email ya está registrado" });
         }
         
-        // Guardamos directamente el JWT como contraseña
-        const passwordJWT = jwt.sign({ password }, secret_key, {expiresIn: "1h"});
-        const userNew = new User({ name, email, password: passwordJWT });
+        // Hasheamos la contraseña con bcrypt
+        const passwordHash = await bcrypt.hash(password, salt);
+        const userNew = new User({ name, email, password: passwordHash });
         
         await userNew.save();
         const id = userNew._id;
@@ -129,8 +130,8 @@ const updateUserById = async (req, res) => {
             if (typeof password !== 'string' || password.length < 4) {
                 return res.status(400).json({ msg: "La contraseña debe tener al menos 4 caracteres" });
             }
-            // Guardamos directamente el JWT como contraseña
-            updateData.password = jwt.sign({ password }, secret_key, {expiresIn: "1h"});
+            // Hasheamos la nueva contraseña con bcrypt
+            updateData.password = await bcrypt.hash(password, salt);
             shouldGenerateToken = true;
         }
 
@@ -176,18 +177,21 @@ const auth = async (req, res) => {
         return res.status(404).json({msg: "El email es invalido"});
     }
     
-    const passwordJWT = jwt.sign({ password }, secret_key, {expiresIn: "1h"});
-    if(passwordJWT !== user.password) {
+    // Comparamos la contraseña ingresada con el hash guardado
+    const isMatch = await bcrypt.compare(password, user.password);
+    if(!isMatch) {
         return res.status(404).json({msg: "La contraseña es invalida"});
     }
 
+    // Aquí generas el JWT con la info que quieras
     const data = {
         id: user._id,
         email: user.email,
+        name: user.name // puedes agregar más campos si lo necesitas
     }
 
     const token = jwt.sign(data, secret_key, {expiresIn: "1h"});
-    return res.status(200).json({msg: "OK", token: token});
+    return res.status(200).json({msg: "OK", token: token, user: { id: user._id, email: user.email, name: user.name }});
 }
 
 export {getUsers, setUser, getUserById, deleteUserById, updateUserById, auth};

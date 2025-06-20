@@ -181,4 +181,21 @@ const getIngredientesByTipo = async (req, res) => {
     }
 }
 
-export {getIngredientes, setIngrediente, getIngredienteById, updateIngredienteById, getIngredientesByTipo};
+const getIngredienteByNombre = async (req, res) => {
+    try {
+        const nombre = req.params.nombre;
+        const ingrediente = await Ingrediente.find({ 
+            nombre: { $regex: nombre, $options: 'i' } 
+        });
+        if (ingrediente.length === 0) {
+            return res.status(404).json({ msg: "Plato no encontrado", data: [] });
+        } else {
+            res.status(200).json({ msg: "OK", data: ingrediente });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error del servidor", error });
+    }
+} 
+
+export {getIngredientes, setIngrediente, getIngredienteById, updateIngredienteById, getIngredientesByTipo, getIngredienteByNombre};
